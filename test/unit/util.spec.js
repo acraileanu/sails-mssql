@@ -107,113 +107,131 @@ describe('util stuffs', function () {
     }
   })
 
-  it('should wrap strings with single-quotes', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: 'bob' } })).to.equal(`[team].[name] = 'bob'`);
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: '3' } })).to.equal(`[team].[count] = '3'`);
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: 3 } })).to.equal(`[team].[count] = 3`);
-  });
-  it('should handle null', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: null } })).to.equal(`[team].[name] is null`);
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '!=': null } } }))
-      .to.equal(`[team].[count] is not null`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'not': null } } }))
-      .to.equal(`[team].[count] is not null`)
-  });
-  it('should handle booleans', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: false } })).to.equal(`[team].[name] = 0`);
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: true } })).to.equal(`[team].[name] = 1`);
-  });
-  it('should combine multiple parameters as an AND clause', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: 'bob', count: 3 } }))
-      .to.equal(`[team].[name] = 'bob' AND [team].[count] = 3`);
-  });
-  it('should handle "and" in waterline query as an AND clause', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { and: [{ name: 'bob' }, { count: 3 }] } }))
-      .to.equal(`(([team].[name] = 'bob') AND ([team].[count] = 3))`);
-  });
-  it('should convert <', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '<': 3 } } }))
-      .to.equal(`[team].[count] < 3`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '<': 'bob' } } }))
-      .to.equal(`[team].[name] < 'bob'`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'lessThan': 3 } } }))
-      .to.equal(`[team].[count] < 3`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'lessThan': 'bob' } } }))
-      .to.equal(`[team].[name] < 'bob'`)
-  })
-  it('should convert <=', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '<=': 3 } } }))
-      .to.equal(`[team].[count] <= 3`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '<=': 'bob' } } }))
-      .to.equal(`[team].[name] <= 'bob'`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'lessThanOrEqual': 3 } } }))
-      .to.equal(`[team].[count] <= 3`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'lessThanOrEqual': 'bob' } } }))
-      .to.equal(`[team].[name] <= 'bob'`)
-  })
-  it('should convert >', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '>': 3 } } }))
-      .to.equal(`[team].[count] > 3`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '>': 'bob' } } }))
-      .to.equal(`[team].[name] > 'bob'`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'greaterThan': 3 } } }))
-      .to.equal(`[team].[count] > 3`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'greaterThan': 'bob' } } }))
-      .to.equal(`[team].[name] > 'bob'`)
-  })
-  it('should convert >=', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '>=': 3 } } }))
-      .to.equal(`[team].[count] >= 3`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '>=': 'bob' } } }))
-      .to.equal(`[team].[name] >= 'bob'`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'greaterThanOrEqual': 3 } } }))
-      .to.equal(`[team].[count] >= 3`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'greaterThanOrEqual': 'bob' } } }))
-      .to.equal(`[team].[name] >= 'bob'`)
+  describe('parseWherePhrase', function () {
+    it('should wrap strings with single-quotes', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: 'bob' } })).to.equal(`[team].[name] = 'bob'`);
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: '3' } })).to.equal(`[team].[count] = '3'`);
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: 3 } })).to.equal(`[team].[count] = 3`);
+    });
+    it('should handle null', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: null } })).to.equal(`[team].[name] is null`);
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '!=': null } } }))
+        .to.equal(`[team].[count] is not null`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'not': null } } }))
+        .to.equal(`[team].[count] is not null`)
+    });
+    it('should handle booleans', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: false } })).to.equal(`[team].[name] = 0`);
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: true } })).to.equal(`[team].[name] = 1`);
+    });
+    it('should combine multiple parameters as an AND clause', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: 'bob', count: 3 } }))
+        .to.equal(`[team].[name] = 'bob' AND [team].[count] = 3`);
+    });
+    it('should handle "and" in waterline query as an AND clause', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { and: [{ name: 'bob' }, { count: 3 }] } }))
+        .to.equal(`(([team].[name] = 'bob') AND ([team].[count] = 3))`);
+    });
+    it('should convert <', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '<': 3 } } }))
+        .to.equal(`[team].[count] < 3`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '<': 'bob' } } }))
+        .to.equal(`[team].[name] < 'bob'`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'lessThan': 3 } } }))
+        .to.equal(`[team].[count] < 3`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'lessThan': 'bob' } } }))
+        .to.equal(`[team].[name] < 'bob'`)
+    })
+    it('should convert <=', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '<=': 3 } } }))
+        .to.equal(`[team].[count] <= 3`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '<=': 'bob' } } }))
+        .to.equal(`[team].[name] <= 'bob'`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'lessThanOrEqual': 3 } } }))
+        .to.equal(`[team].[count] <= 3`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'lessThanOrEqual': 'bob' } } }))
+        .to.equal(`[team].[name] <= 'bob'`)
+    })
+    it('should convert >', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '>': 3 } } }))
+        .to.equal(`[team].[count] > 3`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '>': 'bob' } } }))
+        .to.equal(`[team].[name] > 'bob'`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'greaterThan': 3 } } }))
+        .to.equal(`[team].[count] > 3`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'greaterThan': 'bob' } } }))
+        .to.equal(`[team].[name] > 'bob'`)
+    })
+    it('should convert >=', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '>=': 3 } } }))
+        .to.equal(`[team].[count] >= 3`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '>=': 'bob' } } }))
+        .to.equal(`[team].[name] >= 'bob'`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'greaterThanOrEqual': 3 } } }))
+        .to.equal(`[team].[count] >= 3`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'greaterThanOrEqual': 'bob' } } }))
+        .to.equal(`[team].[name] >= 'bob'`)
+    })
+
+    it('should convert !=', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '!=': 'bob' } } }))
+        .to.equal(`[team].[name] <> 'bob'`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '!=': 3 } } }))
+        .to.equal(`[team].[count] <> 3`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'not': 'bob' } } }))
+        .to.equal(`[team].[name] <> 'bob'`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'not': 3 } } }))
+        .to.equal(`[team].[count] <> 3`)
+    })
+
+    it('should convert like', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { like: 'bob%' } } }))
+        .to.equal(`[team].[name] LIKE 'bob%'`)
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { like: '%bob%' } } }))
+        .to.equal(`[team].[name] LIKE '%bob%'`)
+    })
+    it('should convert contains to LIKE', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { contains: 'bob' } } }))
+        .to.equal(`[team].[name] LIKE '%bob%'`)
+    })
+    it('should convert startsWith', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { startsWith: 'bob' } } }))
+        .to.equal(`[team].[name] LIKE 'bob%'`);
+    })
+    it('should convert endsWith', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { endsWith: 'bob' } } }))
+        .to.equal(`[team].[name] LIKE '%bob'`);
+    })
+
+    it('should convert arrays', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: ['bob', 'sue'] } }))
+        .to.equal(`[team].[name] IN ('bob', 'sue')`);
+    })
+
+    it('should convert != arrays', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '!=': ['bob', 'sue'] } } }))
+        .to.equal(`[team].[name] NOT IN ('bob', 'sue')`);
+    })
+
+    it('should convert or arrays', function () {
+      expect(util.parseWherePhrase({ tableAs: 'team', where: { or: [{ name: { '!=': ['bob', 'sue'] } }, { name: 'ann' }] } }))
+        .to.equal(`(([team].[name] NOT IN ('bob', 'sue')) OR ([team].[name] = 'ann'))`);
+    })
   })
 
-  it('should convert !=', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '!=': 'bob' } } }))
-      .to.equal(`[team].[name] <> 'bob'`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { '!=': 3 } } }))
-      .to.equal(`[team].[count] <> 3`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { 'not': 'bob' } } }))
-      .to.equal(`[team].[name] <> 'bob'`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { count: { 'not': 3 } } }))
-      .to.equal(`[team].[count] <> 3`)
-  })
-
-  it('should convert like', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { like: 'bob%' } } }))
-      .to.equal(`[team].[name] LIKE 'bob%'`)
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { like: '%bob%' } } }))
-      .to.equal(`[team].[name] LIKE '%bob%'`)
-  })
-  it('should convert contains to LIKE', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { contains: 'bob' } } }))
-      .to.equal(`[team].[name] LIKE '%bob%'`)
-  })
-  it('should convert startsWith', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { startsWith: 'bob' } } }))
-      .to.equal(`[team].[name] LIKE 'bob%'`);
-  })
-  it('should convert endsWith', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { endsWith: 'bob' } } }))
-      .to.equal(`[team].[name] LIKE '%bob'`);
-  })
-
-  it('should convert arrays', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: ['bob', 'sue'] } }))
-      .to.equal(`[team].[name] IN ('bob', 'sue')`);
-  })
-
-  it('should convert != arrays', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { name: { '!=': ['bob', 'sue'] } } }))
-      .to.equal(`[team].[name] NOT IN ('bob', 'sue')`);
-  })
-
-  it('should convert or arrays', function () {
-    expect(util.parseWherePhrase({ tableAs: 'team', where: { or: [{ name: { '!=': ['bob', 'sue'] } }, { name: 'ann' }] } }))
-      .to.equal(`(([team].[name] NOT IN ('bob', 'sue')) OR ([team].[name] = 'ann'))`);
+  describe('parseWherePhrase', function () {
+    it('should return empty when sort is not provided', function () {
+      expect(util.parseOrderByPhrase({})).to.equal('');
+      expect(util.parseOrderByPhrase({ tableAs: 'team' })).to.equal('');
+      expect(util.parseOrderByPhrase({ tableAs: 'team', where: { count: 3 } })).to.equal('');
+    })
+    
+    it('should handle arrays and non-arrays', function () {
+      expect(util.parseOrderByPhrase({ tableAs: 'team', sort: { 'id': 'DESC' } })).to.equal('ORDER BY [team].[id] DESC');
+      expect(util.parseOrderByPhrase({ tableAs: 'team', sort: [] })).to.equal('');
+      expect(util.parseOrderByPhrase({ tableAs: 'team', sort: [{ 'id': 'ASC' }] })).to.equal('ORDER BY [team].[id] ASC');
+      expect(util.parseOrderByPhrase({ tableAs: 'team', sort: [{ 'id': 1, 'name': 0 }] }))
+        .to.equal('ORDER BY [team].[id] ASC, [team].[name] DESC');
+    })
   })
 });
